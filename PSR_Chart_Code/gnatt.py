@@ -83,6 +83,9 @@ outer_border_format = workbook.add_format({'border': 1})  # Outer border only
 # Rename the "Title" column to "Task"
 df.rename(columns={'Title': 'Task'}, inplace=True)
 
+# Define a yellow background format with a border
+highlight_format = workbook.add_format({'bg_color': '#FFFF00', 'border': 1, 'bold': True})
+
 # Loop through each sprint and create a separate sheet for each sprint
 sprints = df['Sprint'].unique()
 
@@ -122,6 +125,14 @@ for sprint in sprints:
         'format': workbook.add_format({'bg_color': '#D0D8B3'})  # Light fill color for "Todo" rows
     })
 
+    # Calculate the total of "Hours Completed" for the current sprint
+    hours_total = df_sprint['Hours Completed'].sum()
+
+    # Write the total hours completed to a new row below the table
+    total_row = rows + 1  # This should be the row after the last task row
+    worksheet.write(total_row, 5, 'Total Hours', highlight_format)  # Write "Total Hours" in the Status column with highlighting
+    worksheet.write(total_row, 6, hours_total, highlight_format)  # Write the total hours in the "Hours Completed" column with highlighting
+    
     # Create the Gantt chart for the specific sprint
     fig, ax = plt.subplots(figsize=(14, 10))
 
