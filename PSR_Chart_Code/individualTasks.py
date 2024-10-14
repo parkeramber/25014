@@ -9,7 +9,7 @@ from datetime import datetime
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Define the relative path to your TSV file
-file_path = os.path.join(script_dir, '25014 - Camera for Aerospace Situational Awareness - Team Tasks 09-26-2024.tsv')
+file_path = os.path.join(script_dir, '25014 - Camera for Aerospace Situational Awareness - Team Tasks 10_13_24.tsv')
 
 # Load the TSV file into a DataFrame
 df = pd.read_csv(file_path, sep='\t')
@@ -147,7 +147,7 @@ for member in team_members:
         worksheet.write(total_row, 6, hours_total, highlight_format)  # Write the total hours in the "Hours Completed" column with highlighting
 
         # Create the Gantt chart for the specific member and sprint
-        fig, ax = plt.subplots(figsize=(14, 10))
+        fig, ax = plt.subplots(figsize=(20, 15))
 
         # Loop through each task for the member and plot the Gantt chart
         for i, task in enumerate(df_member_sprint['Task']):
