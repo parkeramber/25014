@@ -6,23 +6,17 @@ import re
 import os
 from datetime import datetime
 
-
 # Get the directory of the current script
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Define the relative path to your TSV file
-file_path = os.path.join(script_dir, '25014 - Camera for Aerospace Situational Awareness - Team Tasks 09-26-2024.tsv')
+file_path = os.path.join(script_dir, '25014 - Camera for Aerospace Situational Awareness - Team Tasks 10_13_24.tsv')
 
 # Load the TSV file into a DataFrame
 df = pd.read_csv(file_path, sep='\t')
 
-# Continue with the rest of your code...
-
-
 # Fill missing or empty Assignees with 'None'
-
 df['Assignees'] = df['Assignees'].fillna('None')  # Replace NaN values with 'None'
-
 
 # Convert the 'Start date' and 'End date' columns to datetime format
 df['Start date'] = pd.to_datetime(df['Start date'], format='%b %d, %Y')
@@ -80,11 +74,11 @@ date_format = workbook.add_format({'num_format': 'mm/dd/yyyy'})  # Date format f
 # Define the border format for the outline (outer border only)
 outer_border_format = workbook.add_format({'border': 1})  # Outer border only
 
+# Define the highlight format for the total hours row
+highlight_format = workbook.add_format({'bg_color': '#FFFF00', 'border': 1, 'bold': True})
+
 # Rename the "Title" column to "Task"
 df.rename(columns={'Title': 'Task'}, inplace=True)
-
-# Define a yellow background format with a border
-highlight_format = workbook.add_format({'bg_color': '#FFFF00', 'border': 1, 'bold': True})
 
 # Loop through each sprint and create a separate sheet for each sprint
 sprints = df['Sprint'].unique()
@@ -132,9 +126,9 @@ for sprint in sprints:
     total_row = rows + 1  # This should be the row after the last task row
     worksheet.write(total_row, 5, 'Total Hours', highlight_format)  # Write "Total Hours" in the Status column with highlighting
     worksheet.write(total_row, 6, hours_total, highlight_format)  # Write the total hours in the "Hours Completed" column with highlighting
-    
+
     # Create the Gantt chart for the specific sprint
-    fig, ax = plt.subplots(figsize=(14, 10))
+    fig, ax = plt.subplots(figsize=(25, 15))
 
     # Loop through each task in the sprint and plot the Gantt chart
     for i, task in enumerate(df_sprint['Task']):
