@@ -7,7 +7,7 @@ from datetime import datetime
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Define the relative path to your TSV file
-file_path = os.path.join(script_dir, '25014 - Camera for Aerospace Situational Awareness - Team Tasks 11_5_24.tsv')
+file_path = os.path.join(script_dir, '25014 - Camera for Aerospace Situational Awareness - Team Tasks 11_19_24.tsv')
 
 # Load the TSV file into a DataFrame
 df = pd.read_csv(file_path, sep='\t')
@@ -47,14 +47,14 @@ if 'Iteration' in df.columns:
 # Add a new 'Corrective Action' column before filtering, to avoid KeyError
 df['Corrective Action'] = ''  # Or fill with placeholder text like "TBD"
 
-# Filter the DataFrame to include only tasks for Sprint 4
-df_sprint_4 = df[df['Sprint'] == 'Sprint 4']  # Modify 'Sprint 4' to match the exact sprint name in your data
+# Filter the DataFrame to include only tasks for Sprint 5
+df_sprint_5 = df[df['Sprint'] == 'Sprint 5']  # Modify 'Sprint 5' to match the exact sprint name in your data
 
 # Use .loc to avoid the SettingWithCopyWarning
-df_sprint_4.loc[df_sprint_4['Assignees'] == 'None', 'Assignees'] = 'Team'
+df_sprint_5.loc[df_sprint_5['Assignees'] == 'None', 'Assignees'] = 'Team'
 
-# Debugging print to check unique sprints in Sprint 4
-print("Unique Sprints in Sprint 4 data:", df_sprint_4['Sprint'].unique())
+# Debugging print to check unique sprints in Sprint 5
+print("Unique Sprints in Sprint 5 data:", df_sprint_5['Sprint'].unique())
 
 # Get the current date and create a folder with the current date
 current_date = datetime.now().strftime('%Y-%m-%d')
@@ -62,7 +62,7 @@ folder_name = f"export_{current_date}"
 os.makedirs(folder_name, exist_ok=True)  # Create the folder if it doesn't exist
 
 # Define the Excel file path inside the newly created folder
-output_filename = os.path.join(folder_name, 'tasks_by_assignee_sprint_4.xlsx')
+output_filename = os.path.join(folder_name, 'tasks_by_assignee_sprint_5.xlsx')
 
 # Export to Excel and include all data in multiple sheets, one per assignee
 writer = pd.ExcelWriter(output_filename, engine='xlsxwriter')
@@ -80,22 +80,22 @@ highlight_format = workbook.add_format({'bg_color': '#FFFF00', 'border': 1, 'bol
 # Define a list of team members including "Team" for tasks not assigned to a specific person
 team_members = ['Team', 'Amber', 'Diego', 'Carly', 'Matthew', 'Aidan', 'John']
 
-# Loop through each team member for Sprint 4
+# Loop through each team member for Sprint 5
 for member in team_members:
     # Filter tasks where the member's name is part of the 'Assignees' column (can have multiple people)
-    df_member_sprint = df_sprint_4[df_sprint_4['Assignees'].str.contains(member)]
+    df_member_sprint = df_sprint_5[df_sprint_5['Assignees'].str.contains(member)]
     
     if df_member_sprint.empty:
-        print(f"No tasks found for {member} in Sprint 4")
+        print(f"No tasks found for {member} in Sprint 5")
         continue
     else:
-        print(f"Processing tasks for {member} in Sprint 4")
+        print(f"Processing tasks for {member} in Sprint 5")
 
-    # Write task data to a new sheet for this member and Sprint 4
-    sheet_name = f'{member}_Sprint_4'
+    # Write task data to a new sheet for this member and Sprint 5
+    sheet_name = f'{member}_Sprint_5'
     df_member_sprint[['Task', 'Assignees', 'Start date', 'End date', 'Sprint', 'Status', 'Hours Completed', 'Corrective Action']].to_excel(writer, sheet_name=sheet_name, index=False)
 
-    # Access the worksheet for this member and Sprint 4
+    # Access the worksheet for this member and Sprint 5
     worksheet = writer.sheets[sheet_name]
 
     # Set column widths and apply the date format
@@ -123,7 +123,7 @@ for member in team_members:
         'format': workbook.add_format({'bg_color': '#D0D8B3'})  # Light fill color for "Todo" rows
     })
 
-    # Calculate the total of "Hours Completed" for the current member and Sprint 4
+    # Calculate the total of "Hours Completed" for the current member and Sprint 5
     hours_total = df_member_sprint['Hours Completed'].sum()
 
     # Write the total hours completed to a new row below the table
