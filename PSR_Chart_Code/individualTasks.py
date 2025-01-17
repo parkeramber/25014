@@ -7,7 +7,7 @@ from datetime import datetime
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Define the relative path to your TSV file
-file_path = os.path.join(script_dir, '25014 - Camera for Aerospace Situational Awareness - Team Tasks 11_19_24.tsv')
+file_path = os.path.join(script_dir, '25014 - Camera for Aerospace Situational Awareness - Team Tasks 1_16_25.tsv')
 
 # Load the TSV file into a DataFrame
 df = pd.read_csv(file_path, sep='\t')
@@ -48,13 +48,13 @@ if 'Iteration' in df.columns:
 df['Corrective Action'] = ''  # Or fill with placeholder text like "TBD"
 
 # Filter the DataFrame to include only tasks for Sprint 5
-df_sprint_5 = df[df['Sprint'] == 'Sprint 5']  # Modify 'Sprint 5' to match the exact sprint name in your data
+df_sprint_6 = df[df['Sprint'] == 'Sprint 6']  # Modify 'Sprint 5' to match the exact sprint name in your data
 
 # Use .loc to avoid the SettingWithCopyWarning
-df_sprint_5.loc[df_sprint_5['Assignees'] == 'None', 'Assignees'] = 'Team'
+df_sprint_6.loc[df_sprint_6['Assignees'] == 'None', 'Assignees'] = 'Team'
 
 # Debugging print to check unique sprints in Sprint 5
-print("Unique Sprints in Sprint 5 data:", df_sprint_5['Sprint'].unique())
+print("Unique Sprints in Sprint 5 data:", df_sprint_6['Sprint'].unique())
 
 # Get the current date and create a folder with the current date
 current_date = datetime.now().strftime('%Y-%m-%d')
@@ -83,16 +83,16 @@ team_members = ['Team', 'Amber', 'Diego', 'Carly', 'Matthew', 'Aidan', 'John']
 # Loop through each team member for Sprint 5
 for member in team_members:
     # Filter tasks where the member's name is part of the 'Assignees' column (can have multiple people)
-    df_member_sprint = df_sprint_5[df_sprint_5['Assignees'].str.contains(member)]
+    df_member_sprint = df_sprint_6[df_sprint_6['Assignees'].str.contains(member)]
     
     if df_member_sprint.empty:
-        print(f"No tasks found for {member} in Sprint 5")
+        print(f"No tasks found for {member} in Sprint 6")
         continue
     else:
-        print(f"Processing tasks for {member} in Sprint 5")
+        print(f"Processing tasks for {member} in Sprint 6")
 
     # Write task data to a new sheet for this member and Sprint 5
-    sheet_name = f'{member}_Sprint_5'
+    sheet_name = f'{member}_Sprint_6'
     df_member_sprint[['Task', 'Assignees', 'Start date', 'End date', 'Sprint', 'Status', 'Hours Completed', 'Corrective Action']].to_excel(writer, sheet_name=sheet_name, index=False)
 
     # Access the worksheet for this member and Sprint 5
