@@ -10,7 +10,7 @@ from datetime import datetime
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Define the relative path to your TSV file
-file_path = os.path.join(script_dir, '25014 - Camera for Aerospace Situational Awareness - Team Tasks 1_30_25.tsv')
+file_path = os.path.join(script_dir, '25014 - Camera for Aerospace Situational Awareness - Team Tasks2-18.tsv')
 
 # Load the TSV file into a DataFrame
 df = pd.read_csv(file_path, sep='\t')
@@ -127,6 +127,23 @@ for sprint in sprints:
     worksheet.write(total_row, 5, 'Total Hours', highlight_format)  # Write "Total Hours" in the Status column with highlighting
     worksheet.write(total_row, 6, hours_total, highlight_format)  # Write the total hours in the "Hours Completed" column with highlighting
 
+    # Count statuses for this sprint
+    status_counts = df_sprint['Status'].value_counts()
+    todo_count = status_counts.get('Todo', 0)
+    in_progress_count = status_counts.get('In Progress', 0)
+    done_count = status_counts.get('Done', 0)
+
+    # Add status counts for this sprint
+    status_start_row = total_row + 2  # Leave one empty row after "Total Hours"
+    worksheet.write(status_start_row, 5, 'TODO Count', highlight_format)
+    worksheet.write(status_start_row, 6, todo_count, highlight_format)
+
+    worksheet.write(status_start_row + 1, 5, 'In Progress Count', highlight_format)
+    worksheet.write(status_start_row + 1, 6, in_progress_count, highlight_format)
+
+    worksheet.write(status_start_row + 2, 5, 'Done Count', highlight_format)
+    worksheet.write(status_start_row + 2, 6, done_count, highlight_format)
+
     # Create the Gantt chart for the specific sprint
     fig, ax = plt.subplots(figsize=(25, 15))
 
@@ -168,6 +185,19 @@ for sprint in sprints:
     worksheet.insert_image(f'I2', gantt_image)
 
 # Close the Excel writer to finalize the Excel file
+# === Add Overall Status Summary to the Last Sheet ===
+status_counts_overall = df['Status'].value_counts()
+todo_total = status_counts_overall.get('Todo', 0)
+in_progress_total = status_counts_overall.get('In Progress', 0)
+done_total = status_counts_overall.get('Done', 0)
+
+df_summary = pd.DataFrame({
+    'Status': ['TODO', 'In Progress', 'Done'],
+    'Count': [todo_total, in_progress_total, done_total]
+})
+
+df_summary.to_excel(writer, sheet_name='Overall Status Summary', index=False)
+
 writer.close()
 
 print(f"Excel file and images saved in folder: {folder_name}")

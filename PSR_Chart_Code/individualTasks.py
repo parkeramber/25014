@@ -7,7 +7,7 @@ from datetime import datetime
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Define the relative path to your TSV file
-file_path = os.path.join(script_dir, '25014 - Camera for Aerospace Situational Awareness - Team Tasks 1_30_25.tsv')
+file_path = os.path.join(script_dir, '25014 - Camera for Aerospace Situational Awareness - Team Tasks2-18.tsv')
 
 # Load the TSV file into a DataFrame
 df = pd.read_csv(file_path, sep='\t')
@@ -48,13 +48,13 @@ if 'Iteration' in df.columns:
 df['Corrective Action'] = ''  # Or fill with placeholder text like "TBD"
 
 # Filter the DataFrame to include only tasks for Sprint 5
-df_sprint_8 = df[df['Sprint'] == 'Sprint 8']  # Modify 'Sprint 5' to match the exact sprint name in your data
+df_sprint_9 = df[df['Sprint'] == 'Sprint 9']  # Modify 'Sprint 5' to match the exact sprint name in your data
 
 # Use .loc to avoid the SettingWithCopyWarning
-df_sprint_8.loc[df_sprint_8['Assignees'] == 'None', 'Assignees'] = 'Team'
+df_sprint_9.loc[df_sprint_9['Assignees'] == 'None', 'Assignees'] = 'Team'
 
 # Debugging print to check unique sprints in Sprint 5
-print("Unique Sprints in Sprint 8 data:", df_sprint_8['Sprint'].unique())
+print("Unique Sprints in Sprint 9 data:", df_sprint_9['Sprint'].unique())
 
 # Get the current date and create a folder with the current date
 current_date = datetime.now().strftime('%Y-%m-%d')
@@ -62,7 +62,7 @@ folder_name = f"export_{current_date}"
 os.makedirs(folder_name, exist_ok=True)  # Create the folder if it doesn't exist
 
 # Define the Excel file path inside the newly created folder
-output_filename = os.path.join(folder_name, 'tasks_by_assignee_sprint_8.xlsx')
+output_filename = os.path.join(folder_name, 'tasks_by_assignee_sprint_9.xlsx')
 
 # Export to Excel and include all data in multiple sheets, one per assignee
 writer = pd.ExcelWriter(output_filename, engine='xlsxwriter')
@@ -83,16 +83,16 @@ team_members = ['Team', 'Amber', 'Diego', 'Carly', 'Matthew', 'Aidan', 'John']
 # Loop through each team member for Sprint 5
 for member in team_members:
     # Filter tasks where the member's name is part of the 'Assignees' column (can have multiple people)
-    df_member_sprint = df_sprint_8[df_sprint_8['Assignees'].str.contains(member)]
+    df_member_sprint = df_sprint_9[df_sprint_9['Assignees'].str.contains(member)]
     
     if df_member_sprint.empty:
-        print(f"No tasks found for {member} in Sprint 8")
+        print(f"No tasks found for {member} in Sprint 9")
         continue
     else:
-        print(f"Processing tasks for {member} in Sprint 8")
+        print(f"Processing tasks for {member} in Sprint 9")
 
     # Write task data to a new sheet for this member and Sprint 5
-    sheet_name = f'{member}_Sprint_8'
+    sheet_name = f'{member}_Sprint_9'
     df_member_sprint[['Task', 'Assignees', 'Start date', 'End date', 'Sprint', 'Status', 'Hours Completed', 'Corrective Action']].to_excel(writer, sheet_name=sheet_name, index=False)
 
     # Access the worksheet for this member and Sprint 5
@@ -125,11 +125,39 @@ for member in team_members:
 
     # Calculate the total of "Hours Completed" for the current member and Sprint 5
     hours_total = df_member_sprint['Hours Completed'].sum()
-
+    tasks_total = df_member_sprint['Task'].count()
     # Write the total hours completed to a new row below the table
     total_row = rows + 1  # This should be the row after the last task row
     worksheet.write(total_row, 5, 'Total Hours', highlight_format)  # Write "Total Hours" in the Status column with highlighting
     worksheet.write(total_row, 6, hours_total, highlight_format)  # Write the total hours in the "Hours Completed" column with highlighting
+
+    worksheet.write(total_row,7, 'Total Tasks', highlight_format)
+    worksheet.write(total_row,8, tasks_total, highlight_format)
+
+# Create a new sheet for team summary
+summary_sheet_name = "Team Summary"
+df_summary = pd.DataFrame({
+    'Team Member': ['Amber', 'John', 'Carly', 'Aidan', 'Matthew', 'Diego'],
+    'Task': [''] * 6,  # Empty placeholders for tasks
+    'Hours': [''] * 6  # Empty placeholders for hours
+})
+
+# Write the summary table to a new sheet
+df_summary.to_excel(writer, sheet_name=summary_sheet_name, index=False)
+
+# Access the worksheet
+worksheet = writer.sheets[summary_sheet_name]
+
+# Set column widths for readability
+worksheet.set_column('A:A', 20)  # Team Member column
+worksheet.set_column('B:B', 40)  # Task column
+worksheet.set_column('C:C', 15)  # Hours column
+
+# Add bold format for headers
+bold_format = workbook.add_format({'bold': True})
+worksheet.write('A1', 'Team Member', bold_format)
+worksheet.write('B1', 'Task', bold_format)
+worksheet.write('C1', 'Hours', bold_format)
 
 # Close the Excel writer to finalize the Excel file
 writer.close()
