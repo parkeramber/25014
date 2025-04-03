@@ -10,7 +10,7 @@ from datetime import datetime
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Define the relative path to your TSV file
-file_path = os.path.join(script_dir, '25014 - Camera for Aerospace Situational Awareness - Team Tasks2-18.tsv')
+file_path = os.path.join(script_dir, '25014 - Camera for Aerospace Situational Awareness - Team Tasks4_1_25.tsv')
 
 # Load the TSV file into a DataFrame
 df = pd.read_csv(file_path, sep='\t')
